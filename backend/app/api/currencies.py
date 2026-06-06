@@ -65,6 +65,29 @@ def get_months(year: int):
 
     return sorted([int(month[0]) for month in months])
 
+@router.get("/quarters/{year}")
+def get_quarters(year: int):
+
+    db = SessionLocal()
+
+    months = (
+        db.query(extract("month", CurrencyRate.date))
+        .filter(extract("year", CurrencyRate.date) == year)
+        .distinct()
+        .all()
+    )
+
+    quarters = sorted(
+        list(
+            set(
+                ((int(month[0]) - 1) // 3) + 1
+                for month in months
+            )
+        )
+    )
+
+    return quarters
+
 @router.get("/days/{year}/{month}")
 def get_days(year: int, month: int):
 
