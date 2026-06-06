@@ -1,9 +1,10 @@
 from datetime import date
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sqlalchemy import extract
+from sqlalchemy.orm import Session
 
-from app.database.connection import SessionLocal
+from app.database.connection import get_db
 from app.models.currency_rate import CurrencyRate
 from app.schemas.currency_rate import CurrencyRateResponse
 from app.services.nbp_service import fetch_exchange_rates
@@ -12,9 +13,7 @@ router = APIRouter()
 
 
 @router.get("/currencies", response_model=list[CurrencyRateResponse])
-def get_currencies():
-
-    db = SessionLocal()
+def get_currencies(db: Session = Depends(get_db)):
 
     currencies = db.query(CurrencyRate).all()
 
@@ -25,9 +24,10 @@ def get_currencies():
     "/currencies/{selected_date}",
     response_model=list[CurrencyRateResponse]
 )
-def get_currencies_by_date(selected_date: date):
-
-    db = SessionLocal()
+def get_currencies_by_date(
+    selected_date: date,
+    db: Session = Depends(get_db)
+):
 
     currencies = (
         db.query(CurrencyRate)
@@ -39,9 +39,7 @@ def get_currencies_by_date(selected_date: date):
 
 
 @router.get("/years")
-def get_years():
-
-    db = SessionLocal()
+def get_years(db: Session = Depends(get_db)):
 
     years = (
         db.query(extract("year", CurrencyRate.date))
@@ -49,12 +47,14 @@ def get_years():
         .all()
     )
 
-    return [int(year[0]) for year in years]
+    return sorted([int(year[0]) for year in years])
+
 
 @router.get("/months/{year}")
-def get_months(year: int):
-
-    db = SessionLocal()
+def get_months(
+    year: int,
+    db: Session = Depends(get_db)
+):
 
     months = (
         db.query(extract("month", CurrencyRate.date))
@@ -65,10 +65,12 @@ def get_months(year: int):
 
     return sorted([int(month[0]) for month in months])
 
-@router.get("/quarters/{year}")
-def get_quarters(year: int):
 
-    db = SessionLocal()
+@router.get("/quarters/{year}")
+def get_quarters(
+    year: int,
+    db: Session = Depends(get_db)
+):
 
     months = (
         db.query(extract("month", CurrencyRate.date))
@@ -88,10 +90,13 @@ def get_quarters(year: int):
 
     return quarters
 
-@router.get("/days/{year}/{month}")
-def get_days(year: int, month: int):
 
-    db = SessionLocal()
+@router.get("/days/{year}/{month}")
+def get_days(
+    year: int,
+    month: int,
+    db: Session = Depends(get_db)
+):
 
     days = (
         db.query(extract("day", CurrencyRate.date))
@@ -103,10 +108,11 @@ def get_days(year: int, month: int):
 
     return sorted([int(day[0]) for day in days])
 
-@router.post("/currencies/fetch")
-def fetch_currencies():
 
-    db = SessionLocal()
+@router.post("/currencies/fetch")
+def fetch_currencies(
+    db: Session = Depends(get_db)
+):
 
     rates = fetch_exchange_rates()
 
@@ -130,9 +136,10 @@ def fetch_currencies():
 
 
 @router.post("/currencies/fetch/{selected_date}")
-def fetch_currencies_by_date(selected_date: date):
-
-    db = SessionLocal()
+def fetch_currencies_by_date(
+    selected_date: date,
+    db: Session = Depends(get_db)
+):
 
     rates = fetch_exchange_rates(str(selected_date))
 
