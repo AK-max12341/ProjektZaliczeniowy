@@ -1,0 +1,105 @@
+<button
+  type="button"
+  (click)="fetchCurrencies()">
+  Pobierz kursy z NBP
+</button>
+
+<p *ngIf="message">
+  {{ message }}
+</p>
+
+<h1>Kursy walut NBP</h1>
+
+<h2>Dostępne lata</h2>
+
+<ul>
+  <li *ngFor="let year of years">
+    <button type="button" (click)="selectYear(year)">
+      {{ year }}
+    </button>
+  </li>
+</ul>
+
+<h3 *ngIf="selectedYear">
+  Wybrany rok: {{ selectedYear }}
+</h3>
+
+<h2 *ngIf="quarters.length > 0">
+  Kwartały
+</h2>
+
+<ul>
+  <li *ngFor="let quarter of quarters">
+    <button
+      type="button"
+      (click)="selectQuarter(quarter)">
+      Q{{ quarter }}
+    </button>
+  </li>
+</ul>
+
+<h3 *ngIf="selectedQuarter">
+  Wybrany kwartał: Q{{ selectedQuarter }}
+</h3>
+
+<h2 *ngIf="months.length > 0">
+  Miesiące
+</h2>
+
+<ul>
+  <li *ngFor="let month of months">
+    <button
+      type="button"
+      (click)="selectMonth(month)">
+      {{ month }}
+    </button>
+  </li>
+</ul>
+
+<h3 *ngIf="selectedMonth">
+  Wybrany miesiąc: {{ selectedMonth }}
+</h3>
+
+<h2 *ngIf="days.length > 0">
+  Dni
+</h2>
+
+<ul>
+  <li *ngFor="let day of days">
+    <button
+      type="button"
+      (click)="selectDay(day)">
+      {{ day }}
+    </button>
+  </li>
+</ul>
+
+<h3 *ngIf="selectedDay">
+  Wybrany dzień: {{ selectedDay }}
+</h3>
+
+<h2 *ngIf="currencies.length > 0">
+  Kursy walut
+</h2>
+
+<table
+  *ngIf="currencies.length > 0"
+  border="1">
+
+  <thead>
+    <tr>
+      <th>Kod</th>
+      <th>Waluta</th>
+      <th>Kurs</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let currency of currencies">
+      <td>{{ currency.code }}</td>
+      <td>{{ currency.currency }}</td>
+      <td>{{ currency.rate }}</td>
+    </tr>
+  </tbody>
+
+</table>
