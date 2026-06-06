@@ -51,6 +51,34 @@ def get_years():
 
     return [int(year[0]) for year in years]
 
+@router.get("/months/{year}")
+def get_months(year: int):
+
+    db = SessionLocal()
+
+    months = (
+        db.query(extract("month", CurrencyRate.date))
+        .filter(extract("year", CurrencyRate.date) == year)
+        .distinct()
+        .all()
+    )
+
+    return sorted([int(month[0]) for month in months])
+
+@router.get("/days/{year}/{month}")
+def get_days(year: int, month: int):
+
+    db = SessionLocal()
+
+    days = (
+        db.query(extract("day", CurrencyRate.date))
+        .filter(extract("year", CurrencyRate.date) == year)
+        .filter(extract("month", CurrencyRate.date) == month)
+        .distinct()
+        .all()
+    )
+
+    return sorted([int(day[0]) for day in days])
 
 @router.post("/currencies/fetch")
 def fetch_currencies():
