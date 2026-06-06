@@ -1,8 +1,15 @@
 import requests
 
 
-def fetch_exchange_rates():
-    url = "https://api.nbp.pl/api/exchangerates/tables/A?format=json"
+def fetch_exchange_rates(selected_date=None):
+
+    if selected_date:
+        url = (
+            f"https://api.nbp.pl/api/exchangerates/tables/A/"
+            f"{selected_date}?format=json"
+        )
+    else:
+        url = "https://api.nbp.pl/api/exchangerates/tables/A?format=json"
 
     response = requests.get(url)
 
