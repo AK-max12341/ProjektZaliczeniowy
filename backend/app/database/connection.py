@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = (
-    "postgresql+psycopg2://postgres:postgres@host.docker.internal:5432/currency_db"
+    "postgresql+psycopg2://postgres:postgres@localhost:5432/currency_db"
 )
 
 engine = create_engine(DATABASE_URL)
